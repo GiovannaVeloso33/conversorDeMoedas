@@ -8,7 +8,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        System.out.println("Qual a sigla da moeda que você deseja converter para real?");
+        System.out.println("Qual a sigla da moeda que você deseja converter?");
+        System.out.println("Exemplo: BRL-USD,CAD-USD");
 
         while (true){
 

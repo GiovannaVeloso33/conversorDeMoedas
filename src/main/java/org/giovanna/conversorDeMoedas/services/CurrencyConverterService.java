@@ -18,7 +18,8 @@ public class CurrencyConverterService {
 
     public void callApiCurrency(String sigla) throws IOException, InterruptedException {
 
-        String url = "https://economia.awesomeapi.com.br/json/last/"+sigla.toUpperCase()+"-BRL?token=2fa773fb32924897de552d069fc7b107b8c53ceb35c36f30ff0ddb338c431ef6";
+        String token = "2fa773fb32924897de552d069fc7b107b8c53ceb35c36f30ff0ddb338c431ef6";
+        String url = "https://economia.awesomeapi.com.br/json/last/"+sigla.toUpperCase()+"?token="+token;
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -58,7 +59,7 @@ public class CurrencyConverterService {
             }
 
             for(CurrencyModelDTO currencyModelDTO : currencyModelList ){
-                System.out.println("O valor da moeda convertida em reais é " + currencyModelDTO.getAsk());
+                System.out.println("O valor da moeda convertida respectivamente é " + currencyModelDTO.getAsk());
             }
         } else {
             System.out.println("Erro na requisição: " + response.body());
