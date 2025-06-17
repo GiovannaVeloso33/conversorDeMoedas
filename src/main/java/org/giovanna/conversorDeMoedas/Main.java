@@ -1,18 +1,8 @@
 package org.giovanna.conversorDeMoedas;
 
-import org.giovanna.conversorDeMoedas.models.CurrencyModelDTO;
+import org.giovanna.conversorDeMoedas.services.CurrencyConverterService;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -20,59 +10,23 @@ public class Main {
 
         System.out.println("Qual a sigla da moeda que você deseja converter para real?");
 
-        Scanner sc = new Scanner(System.in);
+        while (true){
 
-        String sigla = sc.nextLine();
+            Scanner sc = new Scanner(System.in);
 
-        String url = "https://economia.awesomeapi.com.br/json/last/"+sigla+"-BRL?token=2fa773fb32924897de552d069fc7b107b8c53ceb35c36f30ff0ddb338c431ef6";
+            String sigla = sc.nextLine();
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
+            CurrencyConverterService currencyConverterService = new CurrencyConverterService();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() == 404) {
-            System.out.println("Resposta invalida!");
-        }
-
-        if (response.statusCode() == 200) {
-            String json = response.body();
-
-            JsonReader reader = Json.createReader(new StringReader(json));
-            JsonObject root = reader.readObject();
-
-            List<CurrencyModelDTO> currencyModelList = new ArrayList<>();
-
-            for (String key : root.keySet()) {
-                JsonObject obj = root.getJsonObject(key);
-
-                CurrencyModelDTO currencyModel = new CurrencyModelDTO();
-
-                currencyModel.setCode(obj.getString("code"));
-                currencyModel.setCodein(obj.getString("codein"));
-                currencyModel.setName(obj.getString("name"));
-                currencyModel.setHigh(obj.getString("high"));
-                currencyModel.setLow(obj.getString("low"));
-                currencyModel.setVarBid(obj.getString("varBid"));
-                currencyModel.setPctChange(obj.getString("pctChange"));
-                currencyModel.setBid(obj.getString("bid"));
-                currencyModel.setAsk(obj.getString("ask"));
-                currencyModel.setTimestamp(obj.getString("timestamp"));
-                currencyModel.setCreate_date(obj.getString("create_date"));
-
-
-                currencyModelList.add(currencyModel);
+            if(!currencyConverterService.conditionKeep(sigla)){
+                break;
             }
 
-            for(CurrencyModelDTO currencyModelDTO : currencyModelList ){
-                System.out.println("O valor da moeda convertida em reais é " + currencyModelDTO.getAsk());
-            }
-        } else {
-            System.out.println("Erro na requisição: " + response.body());
+            currencyConverterService.callApiCurrency(sigla);
+
+            currencyConverterService.printRetryMessage();
+
         }
 
+        }
     }
-}
