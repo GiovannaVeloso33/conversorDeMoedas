@@ -11,14 +11,17 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyConverterService {
 
-    public void callApiCurrency(String sigla) throws IOException, InterruptedException {
+    DecimalFormat f = new DecimalFormat("#.##");
 
-        String token = "2fa773fb32924897de552d069fc7b107b8c53ceb35c36f30ff0ddb338c431ef6";
+    public void callApiCurrency(String sigla, Double valor) throws IOException, InterruptedException {
+
+        String token = System.getenv("token");
         String url = "https://economia.awesomeapi.com.br/json/last/"+sigla.toUpperCase()+"?token="+token;
 
         HttpClient client = HttpClient.newHttpClient();
@@ -59,7 +62,13 @@ public class CurrencyConverterService {
             }
 
             for(CurrencyModelDTO currencyModelDTO : currencyModelList ){
-                System.out.println("O valor da moeda convertida respectivamente é " + currencyModelDTO.getAsk());
+
+                Double cotacao = Double.parseDouble(currencyModelDTO.getAsk());
+
+                System.out.println("O valor da cotação de " + currencyModelDTO.getCode() +
+                        " para " + currencyModelDTO.getCodein() + " é " + (f.format(cotacao)));
+
+                calculateCoin(valor,cotacao);
             }
         } else {
             System.out.println("Erro na requisição: " + response.body());
@@ -77,6 +86,11 @@ public class CurrencyConverterService {
         }else{
             return true;
         }
+    }
+
+    public void calculateCoin(Double valor, Double cotacao){
+
+        System.out.println("O valor da conversão é: " + f.format(valor/cotacao));
     }
 
 }

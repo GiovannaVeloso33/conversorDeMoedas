@@ -13,17 +13,22 @@ public class Main {
 
         while (true){
 
+            CurrencyConverterService currencyConverterService = new CurrencyConverterService();
+
             Scanner sc = new Scanner(System.in);
 
             String sigla = sc.nextLine();
-
-            CurrencyConverterService currencyConverterService = new CurrencyConverterService();
 
             if(!currencyConverterService.conditionKeep(sigla)){
                 break;
             }
 
-            currencyConverterService.callApiCurrency(sigla);
+            System.out.println("Qual seria o valor?");
+
+            Double valor = sc.nextDouble();
+
+
+            currencyConverterService.callApiCurrency(sigla, valor);
 
             currencyConverterService.printRetryMessage();
 
